@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#060810">
+<title>FluidCreature</title>
+
+<!-- Import map: bare specifiers → CDN URLs.
+     Must appear before any module script. -->
+<script type="importmap">
+{
+  "imports": {
+    "three":         "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/",
+    "lil-gui":       "https://cdn.jsdelivr.net/npm/lil-gui@0.19.2/dist/lil-gui.esm.js"
+  }
+}
+</script>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ══ Loading Screen ══════════════════════════════════════════ -->
+<div id="ld">
+  <div id="ld-inner">
+    <div class="spin"></div>
+    <h2>FLUIDCREATURE</h2>
+
+    <!-- Step-by-step load log -->
+    <div id="ld-steps">
+      <div class="ld-step done">
+        <span class="ld-icon">✓</span>
+        <span class="ld-msg">DOM ready</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Error / Console Panel (always in DOM) ═══════════════════ -->
+<div id="err-panel">
+  <div id="err-header">
+    <span id="err-title">⚠ Console</span>
+    <span id="err-badge">0</span>
+    <div style="flex:1"></div>
+    <button class="err-hbtn" id="err-copy-btn">Copy All</button>
+    <button class="err-hbtn" id="err-clear-btn">Clear</button>
+    <button class="err-hbtn" id="err-close-btn">✕</button>
+  </div>
+  <div id="err-list"></div>
+</div>
+
+<!-- ══ Main App ════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Toolbar -->
+  <div id="tb">
+    <h1>⬡ FC</h1>
+    <button class="mbtn on" data-mode="world">WORLD</button>
+    <button class="mbtn"    data-mode="build">BUILD</button>
+    <button class="mbtn"    data-mode="simulate">SIMULATE</button>
+    <div class="sp"></div>
+    <!-- Console panel toggle; turns red when errors exist -->
+    <button class="ibtn" id="err-open-btn" data-has-error="false" title="Console / Errors">⚑</button>
+    <button class="ibtn" id="btn-rp"       title="Properties">⚙</button>
+  </div>
+
+  <!-- Canvas viewport -->
+  <div id="cv">
+    <canvas id="c"></canvas>
+
+    <!-- HUD overlay -->
+    <div id="hud">
+      FPS: <span id="hfps">--</span><br>
+      Particles: <span id="hpc">0</span><br>
+      Material: <span id="hmat">Water</span>
+    </div>
+
+    <!-- FAB buttons -->
+    <button class="fab" id="fab-panel">☰</button>
+    <button class="fab" id="fab-spawn">＋ Spawn</button>
+
+    <!-- Transient hint -->
+    <div id="hint">Tap the world to pour · long-press to open palette</div>
+  </div>
+
+  <!-- Left panel: materials + spawn size -->
+  <div id="lp">
+    <div class="ptitle">Materials</div>
+
+    <button class="mfbtn on" data-m="0">
+      <div class="sw" style="background:#2288ff"></div>Water
+    </button>
+    <button class="mfbtn" data-m="1">
+      <div class="sw" style="background:#ddbb55"></div>Sand
+    </button>
+    <button class="mfbtn" data-m="2">
+      <div class="sw" style="background:#ff5500"></div>Lava
+    </button>
+    <button class="mfbtn" data-m="3">
+      <div class="sw" style="background:#ddeeff"></div>Snow
+    </button>
+    <button class="mfbtn" data-m="4">
+      <div class="sw" style="background:#ffbb22"></div>Honey
+    </button>
+    <button class="mfbtn" data-m="5">
+      <div class="sw" style="background:#7a5c3a"></div>Mud
+    </button>
+    <button class="mfbtn" data-m="6">
+      <div class="sw" style="background:#334422"></div>Oil
+    </button>
+    <button class="mfbtn" data-m="7">
+      <div class="sw" style="background:#aaddff"></div>Ice
+    </button>
+
+    <div class="ptitle" style="margin-top:16px">Spawn Size</div>
+    <input type="range" id="spawn-size" min="0.5" max="4" step="0.25" value="1.5">
+    <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px">
+      Size: <span id="size-label">1.5</span> m
+    </div>
+  </div>
+
+  <!-- Right panel: properties GUI mount -->
+  <div id="rp">
+    <div class="ptitle">Simulation</div>
+    <div id="gui-root"></div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ══ Scripts ══════════════════════════════════════════════════
+     error-panel.js: regular script (not module) — runs immediately,
+     sets up window.ErrPanel and global error interceptors BEFORE
+     any module code runs.                                        -->
+<script src="js/error-panel.js"></script>
+
+<!-- Main entry point (ES module, deferred by default) -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
